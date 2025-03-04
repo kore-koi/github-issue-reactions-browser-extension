@@ -1,24 +1,10 @@
-# Archive Notice ⚠️
+# GitHub Issue Reactions Extension
 
-> This project is no longer actively maintained and has been archived. Feel free to fork it and build upon it. Thank you for your interest and support!
+Find your answer faster with a list of reaction links in an issue or discussion page
 
-
-# Issue Reactions Chrome & Firefox Extension
-List reaction links on a Github issue or discussion page
-
-<img src="example.png" alt="screenshot example" width="400">
-
-See it in action
+## See it in action
 
 [![Wes Bos Showing off this extension](http://img.youtube.com/vi/K4wc818iNDc/0.jpg)](http://www.youtube.com/watch?v=K4wc818iNDc "Video Title")
-
-## Chrome 
-
-Grab it from the chrome extensions: [Github Issue Reactions](https://chrome.google.com/webstore/detail/github-issue-reactions/enekincdenmmbpgkbhflknhaphpajnfd)
-
-## Firefox
-
-Grab it from the firefox add-ons: [Github Issue Reactions](https://addons.mozilla.org/addon/github-issue-reactions/)
 
 ## Manual Setup
 
@@ -38,6 +24,10 @@ Grab it from the firefox add-ons: [Github Issue Reactions](https://addons.mozill
 
 ## Not Working Any More?
 
-Try to do a git pull to see if it has been fixed 
+Try to do a `git pull` to see if it has been fixed
 
 (**DO NOT FORGET go into your extensions and reload the lasted version**).
+
+### Credits
+
+This project was originally forked from [Norfeldt/github-issue-reactions-browser-extension](https://github.com/Norfeldt/github-issue-reactions-browser-extension)

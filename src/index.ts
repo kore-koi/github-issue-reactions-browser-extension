@@ -331,15 +331,15 @@ function Credits() {
 
   const extensionLink = document.createElement('a')
   extensionLink.href =
-    'https://github.com/Norfeldt/github-issue-reactions-browser-extension'
+    'https://github.com/kore-koi/github-issue-reactions-browser-extension'
   extensionLink.appendChild(document.createTextNode('Reactions Extension'))
 
   const madeBySpan = document.createElement('span')
   madeBySpan.appendChild(document.createTextNode(' by '))
 
   const authorLink = document.createElement('a')
-  authorLink.href = 'https://github.com/Norfeldt'
-  authorLink.appendChild(document.createTextNode('Norfeldt'))
+  authorLink.href = 'https://github.com/kore-koi'
+  authorLink.appendChild(document.createTextNode('Korekoi'))
 
   credits.appendChild(laptopEmojiSpan)
   credits.appendChild(extensionLink)
