@@ -9,16 +9,45 @@ const getBrowser = () => {
 }
 
 const [sideBarId, wrapperId] = [
-  '#partial-discussion-sidebar',
+  // '#partial-discussion-sidebar',
+  "[data-testid=\"issue-viewer-metadata-container\"]",
   '#reactions-wrapper',
 ]
+
+const issueCommentsContainer = "[data-testid=\"issue-timeline-container\"]"
 
 // INITIAL LOADING INDICATOR
 injectWrapper({ withLoadingSpinner: true })
 
+console.log("Andrea Lin test12313123123123")
+
 // Create a sticking wrapper to place all reactions
 function injectWrapper({ withLoadingSpinner } = { withLoadingSpinner: false }) {
-  if (document.querySelector('header')?.innerText.includes('Sign in')) {
+  const isUserSignedIn = !document.querySelector('header')?.innerText.includes('Sign in')
+
+  // User is signed in
+  if (isUserSignedIn) {
+    const header = document.querySelector(sideBarId) as HTMLDivElement
+    if (!header) return
+
+    header.style.position = 'relative'
+    header.style.height = '100%'
+
+    const wrapper = document.createElement('div')
+    wrapper.setAttribute('id', wrapperId.replace('#', ''))
+    const top =
+      document.querySelectorAll('.gh-header-sticky').length > 0 ? 70 : 10
+    wrapper.style.position = 'sticky'
+    wrapper.style.setProperty('position', '-webkit-sticky', 'important')
+    wrapper.style.top = top + 'px'
+    wrapper.innerHTML = ''
+
+    wrapper.appendChild(Title('Reactions', true))
+    if (withLoadingSpinner) {
+      wrapper.appendChild(LoadingSpinner())
+    }
+    header.appendChild(wrapper)
+  } else {
     const header = document.querySelector(sideBarId) as HTMLDivElement
     if (header) {
       const notSignedInClass = 'not-signed-in'
@@ -42,6 +71,9 @@ function injectWrapper({ withLoadingSpinner } = { withLoadingSpinner: false }) {
           'Github source code is different for signed out users and it is currently too much work to support both - sorry! 🙈'
         )
       )
+
+      textReason.appendChild(document.createElement('br'))
+
       textReason.appendChild(
         document.createTextNode(
           'You are welcome to contribute to the project on Github 🙌'
@@ -55,29 +87,7 @@ function injectWrapper({ withLoadingSpinner } = { withLoadingSpinner: false }) {
       )
       header.appendChild(Credits())
     }
-    return
   }
-
-  const header = document.querySelector(sideBarId) as HTMLDivElement
-  if (!header) return
-
-  header.style.position = 'relative'
-  header.style.height = '100%'
-
-  const wrapper = document.createElement('div')
-  wrapper.setAttribute('id', wrapperId.replace('#', ''))
-  const top =
-    document.querySelectorAll('.gh-header-sticky').length > 0 ? 70 : 10
-  wrapper.style.position = 'sticky'
-  wrapper.style.setProperty('position', '-webkit-sticky', 'important')
-  wrapper.style.top = top + 'px'
-  wrapper.innerHTML = ''
-
-  wrapper.appendChild(Title('Reactions', true))
-  if (withLoadingSpinner) {
-    wrapper.appendChild(LoadingSpinner())
-  }
-  header.appendChild(wrapper)
 }
 
 function LoadingSpinner() {
@@ -86,7 +96,8 @@ function LoadingSpinner() {
   loadingSpinner.style.width = side
   loadingSpinner.style.height = side
   loadingSpinner.style.border = `2px solid ${backgroundColor}`
-  loadingSpinner.style.borderTop = `2px solid ${primaryColor}`
+  // loadingSpinner.style.borderTop = `2px solid ${primaryColor}`
+  loadingSpinner.style.borderTop = `2px solid red`
   loadingSpinner.style.borderRadius = '50%'
   loadingSpinner.style.animation = 'spin 1s linear infinite'
   const style = document.createElement('style')
@@ -112,25 +123,32 @@ function hasAncestorWithId(element: Element | null, id: string) {
   return false
 }
 
+function hasAncestorWithAttribute(element: Element | null, attribute: string) {
+  while (element) {
+    if (Object.entries(element.attributes).some(([key, value]) => key === "data-testid" && value.nodeValue === attribute)) {
+      return true
+    }
+    element = element.parentElement
+  }
+  return false
+}
+
 const observer = new MutationObserver((mutations: MutationRecord[]) => {
+  console.log("mutations", mutations)
   for (const mutation of mutations) {
     if (
-      hasAncestorWithId(
-        mutation.target as Element | null,
-        sideBarId.replace('#', '')
-      ) ||
-      hasAncestorWithId(
-        mutation.target as Element | null,
-        wrapperId.replace('#', '')
-      )
+      hasAncestorWithAttribute(mutation.target as Element | null, "issue-viewer-metadata-container")
+      || hasAncestorWithId(mutation.target as Element | null, wrapperId.replace('#', ''))
     ) {
+      console.log("mutation123", mutation)
       continue
     }
 
-    // Check if the URL contains /discussions/ or /issues/
-    if (/\/(discussions|issues|pull)\//.test(window.location.pathname)) {
-      addReactionNav()
-    }
+    //   // Check if the URL contains /discussions/ or /issues/
+    // if (/\/(discussions|issues|pull)\//.test(window.location.pathname)) {
+    //   console.log("adding reactions")
+    //   addReactionNav()
+    // }
   }
 })
 
@@ -149,6 +167,8 @@ function addReactionNav() {
     return
   }
 
+  console.log("hellosoakjdhkasjhdkj112213")
+
   wrapper.appendChild(Reactions())
   if (window.location.pathname.match(/\/discussions\//)) {
     wrapper.appendChild(Title('Discussion Votes'))
@@ -156,6 +176,10 @@ function addReactionNav() {
   }
   wrapper.appendChild(Credits())
 }
+
+setTimeout(() => {
+  addReactionNav()
+}, 10000)
 
 function Title(title: string, withSwitch = false) {
   const element = document.createElement('div') satisfies HTMLDivElement
@@ -202,51 +226,54 @@ function Reactions() {
     node.textContent?.includes(reaction.emoji) ||
     node.querySelector(`g-emoji[alias="${reaction.name}"]`)
 
-  Array.from(document.querySelectorAll('.js-comment-reactions-options'))
+  Array.from(document.querySelectorAll('.react-issue-comment'))
     .filter((node) => reactions.some(findReaction(node)))
     .forEach((reactionSection) => {
-      const combinedReactions = Array.from(
-        reactionSection.querySelectorAll('button[class*="reaction"]')
-      )
-        .map((btn) => ({
-          emoji: reactions.find(findReaction(btn))?.emoji,
-          count: btn.textContent?.match(/\d+/)?.join(''),
-        }))
-        .filter((reaction) => reaction.emoji && reaction.count)
-        .reduce((acc, { emoji, count }) => `${acc} ${emoji} ${count}`, '')
-        
-      const linkContainer = document.createElement('div')
-      linkContainer.classList.add(reactionClass)
-
-      const a = document.createElement('a')
-      const linkText = document.createTextNode('  ' + combinedReactions)
-      linkContainer.appendChild(a)
-      a.appendChild(linkText)
-      a.title = combinedReactions
-
-      let id = null
-      while (id == null) {
-        if (reactionSection.tagName === 'A' && reactionSection.name) {
-          id = reactionSection.name
-          break
-        }
-        if (reactionSection.id) {
-          id = reactionSection.id
-          break
-        }
-        // @ts-expect-error
-        reactionSection = reactionSection.parentNode
-      }
-
-      linkContainer.style.margin = '0.5rem 0'
-      a.href = issueUrl + '#' + id
-      a.style.border = '1px solid var(--borderColor-default, #d2dff0)'
-      a.style.borderRadius = '100px'
-      a.style.padding = '2px 7px'
-      a.style.color = 'var(--color-fg-muted)'
-
-      all.appendChild(linkContainer)
+      console.log("reactionSection", reactionSection)
     })
+  // .forEach((reactionSection) => {
+  //   const combinedReactions = Array.from(
+  //     reactionSection.querySelectorAll('button[class*="reaction"]')
+  //   )
+  //     .map((btn) => ({
+  //       emoji: reactions.find(findReaction(btn))?.emoji,
+  //       count: btn.textContent?.match(/\d+/)?.join(''),
+  //     }))
+  //     .filter((reaction) => reaction.emoji && reaction.count)
+  //     .reduce((acc, { emoji, count }) => `${acc} ${emoji} ${count}`, '')
+
+  //   const linkContainer = document.createElement('div')
+  //   linkContainer.classList.add(reactionClass)
+
+  //   const a = document.createElement('a')
+  //   const linkText = document.createTextNode('  ' + combinedReactions)
+  //   linkContainer.appendChild(a)
+  //   a.appendChild(linkText)
+  //   a.title = combinedReactions
+
+  //   let id = null
+  //   while (id == null) {
+  //     if (reactionSection.tagName === 'A' && reactionSection.name) {
+  //       id = reactionSection.name
+  //       break
+  //     }
+  //     if (reactionSection.id) {
+  //       id = reactionSection.id
+  //       break
+  //     }
+  //     // @ts-expect-error
+  //     reactionSection = reactionSection.parentNode
+  //   }
+
+  //   linkContainer.style.margin = '0.5rem 0'
+  //   a.href = issueUrl + '#' + id
+  //   a.style.border = '1px solid var(--borderColor-default, #d2dff0)'
+  //   a.style.borderRadius = '100px'
+  //   a.style.padding = '2px 7px'
+  //   a.style.color = 'var(--color-fg-muted)'
+
+  //   all.appendChild(linkContainer)
+  // })
 
   getBrowser()
     .storage.sync.get([DISPLAY])
