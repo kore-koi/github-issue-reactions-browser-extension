@@ -5,7 +5,7 @@
   "author": "Andrea Lin <me@andrealin.it>",
   "license": "MIT",
   "scripts": {
-    "dev": "watch 'npm run bundle' src",
+    "dev": "watch 'npm run build' src",
     "clean": "rm -rf dist builds",
     "build": "ts-node bundle.ts --args zip",
     "format": "prettier --write src/**/*"
