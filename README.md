@@ -9,8 +9,8 @@ Find your answer faster with a list of reaction links in an issue or discussion 
 ## Manual Setup
 
 1. Clone this repo
-2. `yarn install`
-3. `yarn bundle` 
+2. `npm install`
+3. `npm run bundle` 
 4. Chrome:
    1. Open Chrome Extensions
    2. Enable Developer mode

@@ -80,7 +80,7 @@ for (const iconFile of iconFiles) {
 
 // CONTENT SCRIPT
 const tscCommand = (browser: Browser) => {
-  const command = `yarn tsc src/index.ts --outDir dist/${browser}`
+  const command = `npx tsc src/index.ts --outDir dist/${browser}`
   console.log(command)
 
   return command

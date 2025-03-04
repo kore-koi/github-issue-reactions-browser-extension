@@ -5,7 +5,7 @@
   "author": "Andrea Lin <me@andrealin.it>",
   "license": "MIT",
   "scripts": {
-    "dev": "watch 'yarn bundle' src",
+    "dev": "watch 'npm run bundle' src",
     "bundle": "ts-node bundle.ts",
     "zip": "ts-node bundle.ts --args zip"
   },
