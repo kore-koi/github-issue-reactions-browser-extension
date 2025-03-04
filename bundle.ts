@@ -94,8 +94,15 @@ function callBack(browser: Browser) {
     const archive = archiver('zip', {
       zlib: { level: 9 },
     })
+
+    const buildsFolder = path.join(__dirname, "builds");
+
+    if (!fs.existsSync(buildsFolder)) {
+      fs.mkdirSync(buildsFolder);
+    }
+
     const output = fs.createWriteStream(
-      path.join(__dirname, `${browser}_${version}.zip`)
+      path.join(buildsFolder, `github-issue-reactions-browser-extension_${browser}_${version}.zip`)
     )
     archive.pipe(output)
     archive.directory(path.join(__dirname, 'dist', `${browser}`), false)
